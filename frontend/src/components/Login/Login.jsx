@@ -1,42 +1,55 @@
-import React, { useState } from 'react'
-import ApiServices from '../../services/ApiServices';
-import AuthUtils from '../../../utils/AuthUtils';
-import { useNavigate,Link } from 'react-router-dom';
-const Login = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const handleChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setFormData({ ...formData, [name]: value })
-  }
-  const handleSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      const response = await ApiServices.login(formData);
-      // console.log(response.user.username,response.user.email);
-      if (response && response.token) {
-        AuthUtils.setToken(response.token);
-        navigate('/profile')
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  return (
-    <>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} /><br />
-        <input type="password" name="password" placeholder="password" value={formData.password} onChange={handleChange} /><br />
-        <button type='submit'>Login</button>
-      </form>
-      <Link to='/signup'>signup here</Link>
-    </>
-  )
-}
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
-export default Login
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    login(email, password);
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col">
+            <label className="mb-2 text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="mb-2 text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition duration-300"
+          >
+            Login
+          </button>
+          <p className="text-sm text-center mt-4">
+            Don&apos;t have an account? <Link to="/signup" className="text-blue-500 hover:underline">Signup here</Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

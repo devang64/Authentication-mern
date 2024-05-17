@@ -12,19 +12,19 @@ class ApiServices {
         const response = await axios.post(url, data)
         return response.data;
     }
-    static logout = async (data) => {
+    static logout = async () => {
         const url = `http://localhost:4000/api/logout`;
         const response = await axios.get(url)
         return response.data;
     }
-    static userProfile = async (id) => {
+    static userProfile = async () => {
         const url = `http://localhost:4000/api/profile`;
-        const response = await axios.get(url,{
+        const response = await axios.get(url, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
             }
         })
-        return response.data.user;
+        return response.data;
     }
 
 }

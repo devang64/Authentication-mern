@@ -4,16 +4,16 @@ const { generateToken } = require('../utils/authService');
 
 const signup = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { email, password, role } = req.body;
 
-        if (!username || !email || !password ) {
+        if (!email || !password) {
             return res.status(403).json({ msg: 'All fields are required' });
         }
         const existUser = await User.findOne({ email })
         if (existUser) {
             return res.status(400).json({ msg: 'User is already exist' });
         }
-        const newUser = new User({ username, email, password, role });
+        const newUser = new User({ email, password, role });
         const token = generateToken(newUser);
         const newUserData = await newUser.save();
         res.status(200).json({
